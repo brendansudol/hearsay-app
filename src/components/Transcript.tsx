@@ -17,7 +17,7 @@ export function Transcript({
     <div>
       {parsed.map((bin, idx) => (
         <div key={idx} className="mb-6 relative">
-          <div className="sm:absolute sm:top-0 sm:right-full sm:mr-2 sm:mt-1 mono text-xs leading-normal text-slate-400">
+          <div className="sm:absolute sm:top-0 sm:right-full sm:mr-2 sm:mt-1 mono text-xs leading-normal text-slate-400 select-none">
             {formatTime(bin.start)}
           </div>
           {bin.segments.map((segment) => (
