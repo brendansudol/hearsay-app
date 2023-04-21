@@ -30,53 +30,57 @@ export type Json = string | number | boolean | null | { [key: string]: Json } | 
 export type AudioResults =
   | { status: "NOT_STARTED" }
   | { status: "RUNNING" }
-  | { status: "SUCCESS"; results: { fileName: string; results: Transcript }[] }
+  | { status: "SUCCESS"; output: { fileName: string; results: Transcript }[] }
   | { status: "FAILED"; reason: string }
 
 export interface AudioRow {
   audioUrl: string | null
-  createdAt: string | null
-  displayName: string | null
-  fingerprint: string | null
+  createdAt: string
+  fingerprint: string
   id: number
-  inputUrl: string | null
+  inputUrl: string
   metadata: Json | null
-  results: AudioResults | null
+  summary: string | null
+  title: string | null
+  transcription: AudioResults | null
 }
 
 export interface Database {
   public: {
     Tables: {
-      audio: {
+      transcriptions: {
         Row: {
           audioUrl: string | null
-          createdAt: string | null
-          displayName: string | null
-          fingerprint: string | null
+          createdAt: string
+          fingerprint: string
           id: number
-          inputUrl: string | null
+          inputUrl: string
           metadata: Json | null
-          results: AudioResults | null
+          summary: string | null
+          title: string | null
+          transcription: AudioResults | null
         }
         Insert: {
           audioUrl?: string | null
-          createdAt?: string | null
-          displayName?: string | null
-          fingerprint?: string | null
+          createdAt?: string
+          fingerprint: string
           id?: number
-          inputUrl?: string | null
+          inputUrl: string
           metadata?: Json | null
-          results?: AudioResults | null
+          summary?: string | null
+          title?: string | null
+          transcription?: AudioResults | null
         }
         Update: {
           audioUrl?: string | null
-          createdAt?: string | null
-          displayName?: string | null
-          fingerprint?: string | null
+          createdAt?: string
+          fingerprint: string
           id?: number
-          inputUrl?: string | null
+          inputUrl: string
           metadata?: Json | null
-          results?: AudioResults | null
+          summary?: string | null
+          title?: string | null
+          transcription?: AudioResults | null
         }
       }
     }

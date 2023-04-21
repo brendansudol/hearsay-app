@@ -30,7 +30,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 function AboutSection({ className }: { className?: string }) {
   return (
-    <section className={className}>
+    <div className={className}>
       <h2 className="flex items-center font-mono text-sm font-medium leading-7 text-slate-900">
         <WaveFormIcon className="h-2.5 w-2.5" color1="fill-violet-300" color2="fill-pink-300" />
         <span className="ml-2.5">About</span>
@@ -43,7 +43,15 @@ function AboutSection({ className }: { className?: string }) {
         turducken leberkas. Sausage pig sirloin pastrami jerky. Jowl frankfurter prosciutto jerky
         sausage bresaola.
       </p>
-    </section>
+      <h2 className="mt-10 flex items-center font-mono text-sm font-medium leading-7 text-slate-900">
+        <WaveFormIcon className="h-2.5 w-2.5" color1="fill-indigo-300" color2="fill-blue-300" />
+        <span className="ml-2.5">Learn more</span>
+      </h2>
+      <p className="mt-2 text-base leading-7 text-slate-700">
+        Bacon ipsum dolor amet ball tip sirloin meatloaf picanha chuck kevin spare ribs drumstick
+        chislic.
+      </p>
+    </div>
   )
 }
 

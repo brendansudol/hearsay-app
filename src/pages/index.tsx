@@ -2,6 +2,7 @@ import axios from "axios"
 import Head from "next/head"
 import { useRouter } from "next/router"
 import React, { useCallback, useMemo, useState } from "react"
+import { TranscribeApiResponse } from "@/types"
 import { isValidUrl } from "@/utils/isValidUrl"
 
 export default function Home() {
@@ -19,11 +20,11 @@ export default function Home() {
     try {
       setIsLoading(true)
       setError(undefined)
-      const response = await axios.post("/api/transcribe", { url })
-      router.push(`/audio/${response.data.id}`)
+      const { data } = await axios.post<TranscribeApiResponse>("/api/transcribe", { url })
+      if (data.status === "success") router.push(`/p/${data.id}`)
     } catch (error: any) {
       console.warn(error)
-      setError(error?.response?.data?.message ?? "unknown")
+      setError(error?.response?.data?.reason ?? "unknown")
     } finally {
       setIsLoading(false)
     }
@@ -43,18 +44,18 @@ export default function Home() {
           <div className="relative">
             <input
               type="text"
-              className="block w-full bg-gray-50 rounded-lg border-0 pl-3 pr-16 py-3 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600"
+              className="block w-full bg-gray-50 rounded-lg border-0 pl-3 pr-28 py-4 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-400"
               placeholder="Audio file URL..."
               value={url}
               onChange={(e) => setUrl(e.target.value)}
             />
-            <div className="absolute inset-y-0 right-0 p-1.5 flex items-center">
+            <div className="absolute inset-y-0 right-0 p-2 flex items-center">
               <button
-                className="px-4 py-0 h-full rounded-md border-0 text-white bg-indigo-500 hover:bg-indigo-600 disabled:bg-indigo-400 disabled:cursor-not-allowed"
+                className="px-4 py-0 h-full rounded-md border-0 text-white bg-indigo-500 hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-400 disabled:bg-indigo-400 disabled:cursor-not-allowed"
                 disabled={isDisabled || isLoading}
                 onClick={handleSubmit}
               >
-                Transcribe
+                {isLoading ? "Saving..." : "Transcribe"}
               </button>
             </div>
           </div>

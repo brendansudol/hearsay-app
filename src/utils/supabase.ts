@@ -7,12 +7,12 @@ export const supabase = createClient<Database>(
 )
 
 export function getEntry(id: string) {
-  return supabase.from("audio").select("*").eq("id", id).single()
+  return supabase.from("transcriptions").select("*").eq("id", id).single()
 }
 
 export async function checkExists(url: string, fingerprint: string) {
   const { data } = await supabase
-    .from("audio")
+    .from("transcriptions")
     .select("*")
     .or(`inputUrl.eq.${url},fingerprint.eq.${fingerprint}`)
 

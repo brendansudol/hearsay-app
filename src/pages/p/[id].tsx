@@ -48,7 +48,7 @@ export default function ResultsPage() {
         console.log(entry) // TODO: remove
         setData(entry)
 
-        const status = entry.results?.status
+        const status = entry.transcription?.status
         if (status === "SUCCESS" || status === "FAILED") setIsPolling(false)
       } catch (error) {
         console.log("error while fetching results", error)
@@ -65,23 +65,6 @@ export default function ResultsPage() {
     <div className="mx-auto p-8 sm:p-12 max-w-screen-md">
       <h1 className="mb-2">ID: {id}</h1>
 
-      {data != null && (
-        <pre className="mb-6 text-xs border" style={{ maxHeight: 300, overflow: "auto" }}>
-          {JSON.stringify(data, null, 2)}
-        </pre>
-      )}
-
-      {data?.audioUrl && (
-        <audio
-          ref={audioRef}
-          autoPlay={true}
-          className="mb-8 w-full"
-          controls={true}
-          onTimeUpdate={handleTimeUpdate}
-          src={data.audioUrl}
-        />
-      )}
-
       {transcript && (
         <Transcript
           segments={transcript.segments}
@@ -89,20 +72,35 @@ export default function ResultsPage() {
           onSelect={handleTranscriptClick}
         />
       )}
+
+      {data?.audioUrl && (
+        <div className="fixed inset-x-0 bottom-0 z-10 lg:left-sidebar">
+          <div className="flex items-center gap-6 bg-white/90 px-4 py-4 shadow shadow-slate-200/80 ring-1 ring-slate-900/5 backdrop-blur-sm lg:p-6">
+            <audio
+              ref={audioRef}
+              autoPlay={true}
+              className="w-full"
+              controls={true}
+              onTimeUpdate={handleTimeUpdate}
+              src={data.audioUrl}
+            />
+          </div>
+        </div>
+      )}
     </div>
   )
 }
 
 function constructTranscript(data: AudioRow | undefined): ITranscript | undefined {
-  if (data == null || data.results?.status !== "SUCCESS") return
+  if (data == null || data.transcription?.status !== "SUCCESS") return
 
-  const { results } = data.results
-  if (results.length === 0) return
-  if (results.length === 1) return results[0].results
+  const { output } = data.transcription
+  if (output.length === 0) return
+  if (output.length === 1) return output[0].results
 
   let [timeOffset, idOffset, textAll] = [0, 0, ""]
   const segmentsAll = []
-  for (const entry of results) {
+  for (const entry of output) {
     const { duration, segments, text } = entry.results
     for (const segment of segments) {
       segmentsAll.push({
@@ -118,7 +116,7 @@ function constructTranscript(data: AudioRow | undefined): ITranscript | undefine
   }
 
   return {
-    ...results[0].results,
+    ...output[0].results,
     duration: timeOffset,
     segments: segmentsAll,
     text: textAll,
