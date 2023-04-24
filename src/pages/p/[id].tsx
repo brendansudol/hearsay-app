@@ -35,6 +35,11 @@ export default function ResultsPage() {
     [currentSegment, transcript]
   )
 
+  const handleAudioDataLoaded = useCallback(() => {
+    const duration = audioRef.current?.duration
+    console.log("DURATION: ", duration)
+  }, [])
+
   useEffect(() => {
     if (!isPolling) return
 
@@ -82,6 +87,7 @@ export default function ResultsPage() {
               className="w-full"
               controls={true}
               onTimeUpdate={handleTimeUpdate}
+              onLoadedData={handleAudioDataLoaded}
               src={data.audioUrl}
             />
           </div>

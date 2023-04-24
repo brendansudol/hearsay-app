@@ -1,10 +1,9 @@
 import axios from "axios"
 import type { NextApiRequest, NextApiResponse } from "next"
-import { TranscribeApiResponse } from "@/types"
+import { TranscribeApiResponse, TranscribeErrorReason } from "@/types"
 import { getFileMetadata, hashPartialFile } from "@/utils/fileUtils"
 import { isValidUrl } from "@/utils/isValidUrl"
 import { checkExists, supabase } from "@/utils/supabase"
-import { getErrorMessage } from "@/utils/getErrorMessage"
 
 const SUPPORTED_FILE_TYPES = ["audio/mpeg", "audio/mp3", "audio/wav", "audio/x-wav"]
 const MAX_FILE_SIZE = 250_000_000 // 250 MB
@@ -13,28 +12,30 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<TranscribeApiResponse>
 ) {
-  const errorResponse = (reason: string) => res.status(500).json({ status: "error", reason })
+  function errorResponse(reason: TranscribeErrorReason) {
+    return res.status(500).json({ status: "error", reason })
+  }
 
-  await sleep(500)
+  await sleep(1_000)
 
   try {
     const { url } = req.body
     if (!isValidUrl(url)) {
-      return errorResponse("invalid url")
+      return errorResponse("invalid-url")
     }
 
     const { contentType, contentLength } = (await getFileMetadata(url)) ?? {}
     if (contentType == null || contentLength == null) {
       return errorResponse("invalid-file")
     } else if (!SUPPORTED_FILE_TYPES.includes(contentType)) {
-      return errorResponse("invalid-file-type")
+      return errorResponse("file-type-unsupported")
     } else if (Number.isNaN(contentLength) || contentLength > MAX_FILE_SIZE) {
-      return errorResponse("invalid-file-size")
+      return errorResponse("file-size-too-big")
     }
 
     const fileHash = await hashPartialFile(url)
     if (fileHash == null) {
-      return errorResponse("file-hash-failed")
+      return errorResponse("file-hash-fail")
     }
 
     const fingerprint = `${fileHash}-${contentLength}-${contentType}`
@@ -55,19 +56,19 @@ export default async function handler(
 
     const id = insert.data?.[0].id
     if (id == null) {
-      return errorResponse("db-insert-failed")
+      return errorResponse("db-insert-fail")
     }
 
     const lambdaParams = { audioUrl: url, dbId: id }
     const response = await axios.post(process.env.LAMBDA_URL!, lambdaParams)
     if (response.status !== 200) {
-      return errorResponse("transcription-kickoff-failed")
+      return errorResponse("transcribe-kickoff-fail")
     }
 
     return res.status(200).json({ status: "success", id })
   } catch (error) {
     console.error(error)
-    return errorResponse(getErrorMessage(error))
+    return errorResponse("unknown")
   }
 }
 

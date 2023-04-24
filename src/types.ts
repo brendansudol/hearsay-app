@@ -15,9 +15,22 @@ export interface Segment {
 
 // api types
 
+export type TranscribeErrorReason =
+  | "invalid-url"
+  | "invalid-file"
+  | "file-type-unsupported"
+  | "file-size-too-big"
+  | "file-hash-fail"
+  | "db-insert-fail"
+  | "transcribe-kickoff-fail"
+  | "unknown"
+
 export type TranscribeApiResponse =
   | { status: "success"; id: number }
-  | { status: "error"; reason: string }
+  | {
+      status: "error"
+      reason: TranscribeErrorReason
+    }
 
 export type ResultsApiResponse =
   | { status: "success"; data: AudioRow }
