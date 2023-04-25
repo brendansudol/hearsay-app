@@ -28,20 +28,28 @@ export default function Home() {
   )
 
   const { url, isLoading, hasSearched, error } = state
-  const isDisabled = useMemo(() => url.trim().length === 0 || !isValidUrl(url), [url])
 
-  const handleSubmit = useCallback(async () => {
-    try {
-      setState({ isLoading: true, hasSearched: true, error: undefined })
-      const { data } = await axios.post<TranscribeApiResponse>("/api/transcribe", { url })
-      if (data.status === "success") return router.push(`/p/${data.id}`)
-    } catch (error: any) {
-      console.warn(error)
-      setState({ error: error?.response?.data?.reason ?? "unknown" })
-    } finally {
-      setState({ isLoading: false })
-    }
-  }, [url, setState])
+  const handleSubmit = useCallback(
+    async (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault()
+      if (!isValidUrl(url)) {
+        setState({ hasSearched: true, error: "invalid-url" })
+        return
+      }
+
+      try {
+        setState({ isLoading: true, hasSearched: true, error: undefined })
+        const { data } = await axios.post<TranscribeApiResponse>("/api/transcribe", { url })
+        if (data.status === "success") return router.push(`/p/${data.id}`)
+      } catch (error: any) {
+        console.warn(error)
+        setState({ error: error?.response?.data?.reason ?? "unknown" })
+      } finally {
+        setState({ isLoading: false })
+      }
+    },
+    [url, setState]
+  )
 
   return (
     <>
@@ -54,24 +62,25 @@ export default function Home() {
       </Head>
       <main className="mx-auto px-6 py-10 sm:px-10 max-w-screen-sm">
         <div className="mb-12 lg:mt-24">
-          <div className="relative">
+          <form className="relative" onSubmit={handleSubmit}>
             <input
               type="text"
               className="block w-full bg-gray-50 rounded-lg border-0 pl-3 pr-[125px] py-4 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-gray-900"
               placeholder="Audio file URL..."
+              required={true}
               value={url}
               onChange={(e) => setState({ url: e.target.value })}
             />
             <div className="absolute inset-y-0 right-0 p-2 flex items-center">
               <button
+                type="submit"
                 className="px-4 py-0 h-full w-[110px] rounded-md border-0 text-white bg-gray-900 hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900 disabled:cursor-not-allowed"
-                disabled={isDisabled || isLoading}
-                onClick={handleSubmit}
+                disabled={isLoading}
               >
                 {isLoading ? "Processing..." : "Transcribe"}
               </button>
             </div>
-          </div>
+          </form>
           <div className="mt-3 text-sm text-gray-600">
             Bacon ipsum dolor amet ball tip sirloin meatloaf picanha chuck kevin spare ribs
             drumstick chislic. Frankfurter jowl shankle leberkas tenderloin.

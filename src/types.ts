@@ -16,6 +16,7 @@ export interface Segment {
 // api types
 
 export type TranscribeErrorReason =
+  | "rate-limit"
   | "invalid-url"
   | "invalid-file"
   | "file-type-unsupported"

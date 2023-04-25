@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { useCallback, useEffect, useRef, useState } from "react"
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -16,7 +17,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <AboutSection className="mt-12 hidden lg:block" />
         </div>
       </header>
-      <main className="border-t border-slate-200 lg:relative lg:mb-28 lg:ml-sidebar lg:border-t-0">
+      <main className="border-t border-slate-200 lg:relative lg:ml-sidebar lg:border-t-0">
+        <WaveFormAnimation className="absolute left-0 top-0 w-full" />
         <div className="relative">{children}</div>
       </main>
       <footer className="border-t border-slate-200 bg-slate-50 py-10 sm:py-16 lg:hidden">
@@ -77,3 +79,46 @@ function WaveFormIcon({
     </svg>
   )
 }
+
+function WaveFormAnimation({ className }: { className?: string }) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [bars, setBars] = useState<number[]>([])
+
+  const generate = useCallback(() => {
+    if (containerRef.current == null) return
+    const width = containerRef.current.offsetWidth
+    const count = Math.floor(width / (BAR_WIDTH + BAR_SPACING))
+    const newBars = [...Array(count)].map(getHeight)
+    setBars(newBars)
+  }, [])
+
+  useEffect(() => {
+    generate()
+
+    window.addEventListener("resize", generate)
+    const intervalId = setInterval(generate, 5_000)
+
+    return () => {
+      window.removeEventListener("resize", generate)
+      clearInterval(intervalId)
+    }
+  }, [generate])
+
+  return (
+    <div className={className} ref={containerRef}>
+      <div className="flex justify-around overflow-hidden opacity-20 lg:opacity-30">
+        {bars.map((height, idx) => (
+          <div
+            key={idx}
+            className="waveform-bar bg-gradient-to-b from-cyan-400 to-blue-400"
+            style={{ width: BAR_WIDTH, height }}
+          ></div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+const BAR_WIDTH = 5
+const BAR_SPACING = 5
+const getHeight = () => Math.floor(Math.random() * 30 + 5)

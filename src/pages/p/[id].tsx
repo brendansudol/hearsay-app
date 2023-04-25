@@ -1,13 +1,23 @@
 import axios from "axios"
-import { useRouter } from "next/router"
+import { GetServerSideProps, InferGetServerSidePropsType } from "next"
 import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { AudioRow, ResultsApiResponse, Segment, Transcript as ITranscript } from "@/types"
 import { Transcript } from "@/components/Transcript"
+import { getEntry } from "@/utils/supabase"
 
-export default function ResultsPage() {
-  const router = useRouter()
-  const id = router.query.id as string
+export const getServerSideProps: GetServerSideProps<{ id: string }> = async (context) => {
+  const { id } = context.query ?? {}
+  if (id == null || Array.isArray(id)) return { notFound: true }
 
+  const { data } = await getEntry(id)
+  if (data == null) return { notFound: true }
+
+  return { props: { id } }
+}
+
+export default function ResultsPage({
+  id,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const audioRef = useRef<HTMLAudioElement>(null)
 
   const [data, setData] = useState<AudioRow>()
