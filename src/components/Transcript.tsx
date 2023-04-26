@@ -26,7 +26,7 @@ export function Transcript({
               className={clsx(
                 "py-[2px]",
                 segment.id === currentId
-                  ? "bg-teal-100 rounded-md hover:bg-teal-200"
+                  ? "bg-cyan-100 rounded-md hover:bg-cyan-200"
                   : "hover:bg-slate-100 hover:rounded-md"
               )}
               onDoubleClick={() => onSelect?.(segment)}

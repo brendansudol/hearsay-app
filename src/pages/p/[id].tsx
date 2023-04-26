@@ -24,6 +24,8 @@ export default function ResultsPage({
   const [currentSegment, setCurrentSegment] = useState<Segment>()
   const [isPolling, setIsPolling] = useState(true) // TODO: init to false if data is ready
 
+  const title = data?.title
+  const summary = data?.summary
   const transcript = useMemo(() => constructTranscript(data), [data])
 
   const handleTranscriptClick = useCallback((segment: Segment) => {
@@ -77,15 +79,23 @@ export default function ResultsPage({
   }, [id, isPolling])
 
   return (
-    <div className="mx-auto p-8 sm:p-12 max-w-screen-md">
-      <h1 className="mb-2">ID: {id}</h1>
+    <div className="mx-auto p-8 sm:px-12 sm:py-16 max-w-screen-md">
+      {summary && (
+        <div className="mb-8 p-3 bg-slate-50 rounded-lg border border-slate-200">
+          <div className="mb-2 font-mono text-sm font-bold leading-none">Summary</div>
+          <p>{summary}</p>
+        </div>
+      )}
 
       {transcript && (
-        <Transcript
-          segments={transcript.segments}
-          currentId={currentSegment?.id}
-          onSelect={handleTranscriptClick}
-        />
+        <div className="pb-20">
+          <div className="mb-2 font-mono text-sm font-bold leading-none">Transcript</div>
+          <Transcript
+            segments={transcript.segments}
+            currentId={currentSegment?.id}
+            onSelect={handleTranscriptClick}
+          />
+        </div>
       )}
 
       {data?.audioUrl && (

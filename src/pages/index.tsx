@@ -65,7 +65,7 @@ export default function Home() {
           <form className="relative" onSubmit={handleSubmit}>
             <input
               type="text"
-              className="block w-full bg-gray-50 rounded-lg border-0 pl-3 pr-[125px] py-4 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-gray-900"
+              className="block w-full bg-slate-50 rounded-lg border-0 pl-3 pr-[125px] py-4 ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-slate-900"
               placeholder="Audio file URL..."
               required={true}
               value={url}
@@ -74,14 +74,14 @@ export default function Home() {
             <div className="absolute inset-y-0 right-0 p-2 flex items-center">
               <button
                 type="submit"
-                className="px-4 py-0 h-full w-[110px] rounded-md border-0 text-white bg-gray-900 hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900 disabled:cursor-not-allowed"
+                className="px-4 py-0 h-full w-[110px] rounded-md border-0 text-white bg-slate-900 hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 disabled:cursor-not-allowed"
                 disabled={isLoading}
               >
                 {isLoading ? "Processing..." : "Transcribe"}
               </button>
             </div>
           </form>
-          <div className="mt-3 text-sm text-gray-600">
+          <div className="mt-3 text-sm text-slate-600">
             Bacon ipsum dolor amet ball tip sirloin meatloaf picanha chuck kevin spare ribs
             drumstick chislic. Frankfurter jowl shankle leberkas tenderloin.
           </div>
@@ -92,7 +92,7 @@ export default function Home() {
             {EXAMPLES.map((ex, i) => (
               <div
                 key={i}
-                className="p-3 text-sm rounded-lg bg-gray-100 hover:bg-gray-200 cursor-pointer"
+                className="p-3 text-sm rounded-lg bg-slate-100 hover:bg-slate-200 cursor-pointer"
               >
                 Example {i + 1}: {`${ex} `.repeat(5)}
               </div>
