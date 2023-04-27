@@ -2,6 +2,7 @@ import axios from "axios"
 import type { NextApiRequest, NextApiResponse } from "next"
 import { Ratelimit } from "@upstash/ratelimit"
 import { Redis } from "@upstash/redis"
+import { MAX_FILE_SIZE, SUPPORTED_FILE_TYPES } from "@/consts"
 import { TranscribeApiResponse, TranscribeErrorReason } from "@/types"
 import { getFileMetadata, hashPartialFile } from "@/utils/fileUtils"
 import { isValidUrl } from "@/utils/isValidUrl"
@@ -13,9 +14,6 @@ const ratelimit = new Ratelimit({
   limiter: Ratelimit.fixedWindow(5, "12 h"),
   ephemeralCache: CACHE,
 })
-
-const SUPPORTED_FILE_TYPES = ["audio/mpeg", "audio/mp3", "audio/wav", "audio/x-wav"]
-const MAX_FILE_SIZE = 250_000_000 // 250 MB
 
 export default async function handler(
   req: NextApiRequest,
