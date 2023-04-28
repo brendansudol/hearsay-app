@@ -4,7 +4,6 @@ TODO:
 
 - copy on all pages + readme
 - detail page loading / failed states
-- autoscroll transcript on seek
 
 LATER:
 
@@ -18,3 +17,4 @@ DONE:
 - fetch summary + title (in lambda)
 - show summary + title on detail page
 - more supported file types
+- autoscroll transcript on seek

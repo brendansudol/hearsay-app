@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.14",
+    "@heroicons/react": "^2.0.17",
     "@radix-ui/react-tooltip": "^1.0.5",
     "@supabase/supabase-js": "^2.20.0",
     "@types/node": "18.15.11",

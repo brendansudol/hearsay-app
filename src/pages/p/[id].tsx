@@ -4,6 +4,8 @@ import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "re
 import { AudioRow, ResultsApiResponse, Segment, Transcript as ITranscript } from "@/types"
 import { Transcript } from "@/components/Transcript"
 import { getEntry } from "@/utils/supabase"
+import { Switch } from "@headlessui/react"
+import clsx from "clsx"
 
 export const getServerSideProps: GetServerSideProps<{ id: string }> = async (context) => {
   const { id } = context.query ?? {}
@@ -23,6 +25,7 @@ export default function ResultsPage({
   const [data, setData] = useState<AudioRow>()
   const [currentSegment, setCurrentSegment] = useState<Segment>()
   const [isPolling, setIsPolling] = useState(true) // TODO: init to false if data is ready
+  const [shouldAutoScroll, setShouldAutoScroll] = useState(true)
 
   const title = data?.title
   const summary = data?.summary
@@ -93,6 +96,7 @@ export default function ResultsPage({
           <Transcript
             segments={transcript.segments}
             currentId={currentSegment?.id}
+            shouldAutoScroll={shouldAutoScroll}
             onSelect={handleTranscriptClick}
           />
         </div>
@@ -104,12 +108,36 @@ export default function ResultsPage({
             <audio
               ref={audioRef}
               autoPlay={true}
-              className="w-full"
+              className="w-full focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2"
               controls={true}
               onTimeUpdate={handleTimeUpdate}
               onLoadedData={handleAudioDataLoaded}
               src={data.audioUrl}
             />
+            <Switch.Group as="div" className="flex items-center">
+              <Switch
+                checked={shouldAutoScroll}
+                onChange={setShouldAutoScroll}
+                className={clsx(
+                  shouldAutoScroll ? "bg-slate-900" : "bg-gray-200",
+                  "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2"
+                )}
+              >
+                <span
+                  aria-hidden="true"
+                  className={clsx(
+                    shouldAutoScroll ? "translate-x-5" : "translate-x-0",
+                    "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                  )}
+                />
+              </Switch>
+              <Switch.Label
+                as="span"
+                className="ml-3 text-sm font-medium text-gray-900 leading-tight"
+              >
+                Auto scroll transcript
+              </Switch.Label>
+            </Switch.Group>
           </div>
         </div>
       )}
