@@ -1,7 +1,13 @@
 import axios from "axios"
 import { GetServerSideProps, InferGetServerSidePropsType } from "next"
 import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { AudioRow, ResultsApiResponse, Segment, Transcript as ITranscript } from "@/types"
+import {
+  AudioResults,
+  AudioRow,
+  ResultsApiResponse,
+  Segment,
+  Transcript as ITranscript,
+} from "@/types"
 import { Transcript } from "@/components/Transcript"
 import { getEntry } from "@/utils/supabase"
 import { Switch } from "@headlessui/react"
@@ -27,8 +33,8 @@ export default function ResultsPage({
   const [isPolling, setIsPolling] = useState(true) // TODO: init to false if data is ready
   const [shouldAutoScroll, setShouldAutoScroll] = useState(true)
 
-  const title = data?.title
-  const summary = data?.summary
+  const { audioUrl, summary, transcription } = data ?? {}
+  const { isLoading, isFailed } = checkStatus(transcription?.status)
   const transcript = useMemo(() => constructTranscript(data), [data])
 
   const handleTranscriptClick = useCallback((segment: Segment) => {
@@ -82,7 +88,22 @@ export default function ResultsPage({
   }, [id, isPolling])
 
   return (
-    <div className="mx-auto p-8 sm:px-12 sm:py-16 max-w-screen-md">
+    <div
+      className={clsx(
+        "mx-auto p-8 sm:px-12 sm:py-16 max-w-screen-md lg:min-h-screen flex flex-col",
+        audioUrl != null && "lg:pb-[140px]"
+      )}
+    >
+      {isLoading && (
+        <div className="flex flex-auto p-6 border-2 border-dashed rounded-lg">Loading...</div>
+      )}
+
+      {isFailed && (
+        <div className="flex flex-auto p-6 border-2 border-dashed rounded-lg">
+          Transcription failed :(
+        </div>
+      )}
+
       {summary && (
         <div className="mb-8 p-3 bg-slate-50 rounded-lg border border-slate-200">
           <div className="mb-2 font-mono text-sm font-bold leading-none">Summary</div>
@@ -91,7 +112,7 @@ export default function ResultsPage({
       )}
 
       {transcript && (
-        <div className="pb-20">
+        <div>
           <div className="mb-2 font-mono text-sm font-bold leading-none">Transcript</div>
           <Transcript
             segments={transcript.segments}
@@ -102,17 +123,17 @@ export default function ResultsPage({
         </div>
       )}
 
-      {data?.audioUrl && (
+      {audioUrl && (
         <div className="fixed inset-x-0 bottom-0 z-10 lg:left-sidebar">
           <div className="flex items-center gap-6 bg-white/90 px-4 py-4 shadow shadow-slate-200/80 ring-1 ring-slate-900/5 backdrop-blur-sm lg:p-6">
             <audio
               ref={audioRef}
               autoPlay={true}
-              className="w-full focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2"
+              className="w-full focus:outline-none focus:ring-2 focus:ring-slate-200 focus:ring-offset-2"
               controls={true}
               onTimeUpdate={handleTimeUpdate}
               onLoadedData={handleAudioDataLoaded}
-              src={data.audioUrl}
+              src={audioUrl}
             />
             <Switch.Group as="div" className="flex items-center">
               <Switch
@@ -133,9 +154,11 @@ export default function ResultsPage({
               </Switch>
               <Switch.Label
                 as="span"
-                className="ml-3 text-sm font-medium text-gray-900 leading-tight"
+                className="ml-3 text-sm font-medium text-gray-900 leading-[1.1]"
               >
-                Auto scroll transcript
+                <span>
+                  Auto scroll <span className="hidden md:inline">transcript</span>
+                </span>
               </Switch.Label>
             </Switch.Group>
           </div>
@@ -143,6 +166,12 @@ export default function ResultsPage({
       )}
     </div>
   )
+}
+
+function checkStatus(status: AudioResults["status"] | undefined) {
+  const isLoading = status == null || status === "NOT_STARTED" || status === "RUNNING"
+  const isFailed = status === "FAILED"
+  return { isLoading, isFailed }
 }
 
 function constructTranscript(data: AudioRow | undefined): ITranscript | undefined {

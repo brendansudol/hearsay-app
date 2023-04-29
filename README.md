@@ -4,6 +4,7 @@ TODO:
 
 - copy on all pages + readme
 - detail page loading / failed states
+- 4 good seeded examples
 
 LATER:
 
