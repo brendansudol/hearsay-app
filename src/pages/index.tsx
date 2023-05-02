@@ -52,81 +52,95 @@ export default function Home() {
   )
 
   return (
-    <>
-      <Head>
-        <title>TODO</title>
-        <meta name="description" content="TODO" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        {/* TODO: add proper favicon */}
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <main className="mx-auto px-6 py-10 sm:px-10 max-w-screen-sm">
-        <div className="mb-12 lg:mt-24">
-          <form className="relative" onSubmit={handleSubmit}>
-            <input
-              type="text"
-              className="block w-full bg-slate-50 rounded-lg border-0 pl-3 pr-[125px] py-4 ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-slate-900"
-              placeholder="Audio file URL..."
-              required={true}
-              value={url}
-              onChange={(e) => setState({ url: e.target.value })}
-            />
-            <div className="absolute inset-y-0 right-0 p-2 flex items-center">
-              <button
-                type="submit"
-                className="px-4 py-0 h-full w-[110px] rounded-md border-0 text-white bg-slate-900 hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 disabled:cursor-not-allowed"
-                disabled={isLoading}
-              >
-                {isLoading ? "Processing..." : "Transcribe"}
-              </button>
-            </div>
-          </form>
-          <div className="mt-3 text-sm text-slate-600">
-            Bacon ipsum dolor amet ball tip sirloin meatloaf picanha chuck kevin spare ribs
-            drumstick chislic. Frankfurter jowl shankle leberkas tenderloin.
+    <main className="mx-auto px-6 py-10 sm:px-10 max-w-screen-sm">
+      <div className="mb-12 lg:mt-24">
+        <form className="relative" onSubmit={handleSubmit}>
+          <input
+            type="text"
+            className="block w-full bg-slate-50 rounded-lg border-0 pl-3 pr-[125px] py-4 ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-slate-900"
+            placeholder="Add audio file URL..."
+            required={true}
+            value={url}
+            onChange={(e) => setState({ url: e.target.value })}
+          />
+          <div className="absolute inset-y-0 right-0 p-2 flex items-center">
+            <button
+              type="submit"
+              className="px-4 py-0 h-full w-[110px] rounded-md border-0 text-white bg-slate-900 hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 disabled:cursor-not-allowed"
+              disabled={isLoading}
+            >
+              {isLoading ? "Processing..." : "Transcribe"}
+            </button>
           </div>
+        </form>
+        <div className="mt-2 text-sm text-slate-500">
+          250 MB limit; for podcast audio file URLs, try{" "}
+          <a className="underline" href="https://podbay.fm/" target="_blank" rel="noreferrer">
+            podbay.fm
+          </a>
         </div>
+      </div>
 
-        {!hasSearched && (
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6">
+      {!hasSearched && (
+        <div>
+          <div className="mb-3">Here are a few examples:</div>
+          <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
             {EXAMPLES.map((ex, i) => (
-              <div
+              <a
                 key={i}
                 className="p-3 text-sm rounded-lg bg-slate-100 hover:bg-slate-200 cursor-pointer"
+                href={`/p/${ex.id}`}
               >
-                Example {i + 1}: {`${ex} `.repeat(5)}
-              </div>
+                {ex.text}
+              </a>
             ))}
           </div>
-        )}
+        </div>
+      )}
 
-        {isLoading && (
-          <div className="p-5 flex bg-green-50 rounded-lg">
-            <div className="flex-shrink-0">
-              <Loader2 className="h-5 w-5 text-green-400 animate-spin" />
-            </div>
-            <div className="ml-3 text-sm text-green-700">
-              <span className="font-bold">Processing audio file...</span>
-            </div>
+      {isLoading && (
+        <div className="p-5 flex bg-green-50 rounded-lg">
+          <div className="flex-shrink-0">
+            <Loader2 className="h-5 w-5 text-green-400 animate-spin" />
           </div>
-        )}
+          <div className="ml-3 text-sm text-green-700">
+            <span className="font-bold">Processing audio...</span>
+          </div>
+        </div>
+      )}
 
-        {error != null && (
-          <div className="p-5 flex bg-red-50 rounded-lg">
-            <div className="flex-shrink-0">
-              <Frown className="h-5 w-5 text-red-400" />
-            </div>
-            <div className="ml-3 text-sm text-red-700">
-              <span className="font-bold">Sorry!</span> {getErrorMessage(error)}
-            </div>
+      {error != null && (
+        <div className="p-5 flex bg-red-50 rounded-lg">
+          <div className="flex-shrink-0">
+            <Frown className="h-5 w-5 text-red-400" />
           </div>
-        )}
-      </main>
-    </>
+          <div className="ml-3 text-sm text-red-700">
+            <span className="font-bold">Sorry!</span> {getErrorMessage(error)}
+          </div>
+        </div>
+      )}
+    </main>
   )
 }
 
-const EXAMPLES = ["foo", "bar", "baz", "qux"]
+const EXAMPLES = [
+  {
+    text: "This American Life - Me Minus Me",
+    id: 8,
+  },
+  {
+    text: "Conan O’Brien Needs A Friend - Bill Burr",
+    id: 12,
+  },
+  {
+    text: "Lex Fridman Podcast - Sam Altman",
+    id: 9,
+  },
+  {
+    text: "Radiolab - Space",
+    id: 7,
+  },
+]
 
 function getErrorMessage(reason: TranscribeErrorReason): string {
   // TODO: add nice error messages for each reason
