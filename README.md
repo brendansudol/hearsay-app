@@ -2,12 +2,13 @@
 
 TODO:
 
-- copy on all pages + readme
+- error messages
 - detail page loading / failed states
-- 4 good seeded examples
+- github readme.md(s)
 
 LATER:
 
+- segment permalinks on detail page
 - prettier audio player
 
 DONE:
@@ -19,3 +20,4 @@ DONE:
 - show summary + title on detail page
 - more supported file types
 - autoscroll transcript on seek
+- 4 good seeded examples

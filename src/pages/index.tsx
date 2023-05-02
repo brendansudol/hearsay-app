@@ -32,6 +32,7 @@ export default function Home() {
   const handleSubmit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault()
+
       if (!isValidUrl(url)) {
         setState({ hasSearched: true, error: "invalid-url" })
         return
@@ -43,9 +44,10 @@ export default function Home() {
         if (data.status === "success") return router.push(`/p/${data.id}`)
       } catch (error: any) {
         console.warn(error)
-        setState({ error: error?.response?.data?.reason ?? "unknown" })
-      } finally {
-        setState({ isLoading: false })
+        setState({
+          isLoading: false,
+          error: error?.response?.data?.reason ?? "unknown",
+        })
       }
     },
     [url, setState]
