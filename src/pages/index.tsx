@@ -1,8 +1,7 @@
 import axios from "axios"
 import { Frown, Loader2 } from "lucide-react"
-import Head from "next/head"
 import { useRouter } from "next/router"
-import React, { useCallback, useMemo, useState } from "react"
+import React, { useCallback, useState } from "react"
 import { TranscribeApiResponse, TranscribeErrorReason } from "@/types"
 import { isValidUrl } from "@/utils/isValidUrl"
 

@@ -1,18 +1,3 @@
-export interface Transcript {
-  duration: number
-  language: string
-  segments: Segment[]
-  task: string
-  text: string
-}
-
-export interface Segment {
-  id: number
-  start: number
-  end: number
-  text: string
-}
-
 // api types
 
 export type TranscribeErrorReason =
@@ -38,6 +23,21 @@ export type ResultsApiResponse =
   | { status: "error"; reason: string }
 
 // db types
+
+export interface Transcript {
+  duration: number
+  language: string
+  segments: Segment[]
+  task: string
+  text: string
+}
+
+export interface Segment {
+  id: number
+  start: number
+  end: number
+  text: string
+}
 
 export type Json = string | number | boolean | null | { [key: string]: Json } | Json[]
 

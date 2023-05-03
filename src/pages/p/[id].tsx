@@ -1,6 +1,9 @@
 import axios from "axios"
+import clsx from "clsx"
+import { Frown, Loader2 } from "lucide-react"
 import { GetServerSideProps, InferGetServerSidePropsType } from "next"
 import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { Switch } from "@headlessui/react"
 import {
   AudioResults,
   AudioRow,
@@ -10,9 +13,6 @@ import {
 } from "@/types"
 import { Transcript } from "@/components/Transcript"
 import { getEntry } from "@/utils/supabase"
-import { Switch } from "@headlessui/react"
-import clsx from "clsx"
-import { Frown, Loader2 } from "lucide-react"
 
 export const getServerSideProps: GetServerSideProps<{ id: string }> = async (context) => {
   const { id } = context.query ?? {}
@@ -56,11 +56,6 @@ export default function ResultsPage({
     },
     [currentSegment, transcript]
   )
-
-  const handleAudioDataLoaded = useCallback(() => {
-    const duration = audioRef.current?.duration
-    console.log("DURATION: ", duration)
-  }, [])
 
   useEffect(() => {
     if (!isPolling) return
@@ -151,7 +146,6 @@ export default function ResultsPage({
               className="w-full focus:outline-none focus:ring-2 focus:ring-slate-200 focus:ring-offset-2"
               controls={true}
               onTimeUpdate={handleTimeUpdate}
-              onLoadedData={handleAudioDataLoaded}
               src={audioUrl}
             />
             <Switch.Group as="div" className="flex items-center">
