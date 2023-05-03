@@ -59,7 +59,7 @@ export default function Home() {
         <form className="relative" onSubmit={handleSubmit}>
           <input
             type="text"
-            className="block w-full bg-slate-50 rounded-lg border-0 pl-3 pr-[125px] py-4 ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-slate-900"
+            className="block w-full bg-slate-50 rounded-lg border-0 pl-3 pr-[125px] py-4 ring-1 ring-inset ring-slate-200 focus:ring-2 focus:ring-slate-900"
             placeholder="Add audio file URL..."
             required={true}
             value={url}
@@ -105,7 +105,7 @@ export default function Home() {
           <div className="flex-shrink-0">
             <Loader2 className="h-5 w-5 text-green-400 animate-spin" />
           </div>
-          <div className="ml-3 text-sm text-green-700">
+          <div className="ml-2 text-sm text-green-700">
             <span className="font-bold">Processing audio...</span>
           </div>
         </div>
@@ -116,7 +116,7 @@ export default function Home() {
           <div className="flex-shrink-0">
             <Frown className="h-5 w-5 text-red-400" />
           </div>
-          <div className="ml-3 text-sm text-red-700">
+          <div className="ml-2 text-sm text-red-700">
             <span className="font-bold">Sorry!</span> {getErrorMessage(error)}
           </div>
         </div>
@@ -145,6 +145,22 @@ const EXAMPLES = [
 ]
 
 function getErrorMessage(reason: TranscribeErrorReason): string {
-  // TODO: add nice error messages for each reason
-  return reason
+  switch (reason) {
+    case "rate-limit":
+      return "You’ve reached the submission limit for today. Please come back tomorrow."
+    case "invalid-url":
+    case "invalid-file":
+      return "Invalid file URL. Please try another one."
+    case "file-type-unsupported":
+      return "Invalid file type. The following are supported: mp3, mp4, mpeg, mpga, m4a, wav, and webm."
+    case "file-size-too-big":
+      return "File is too large; currently, the limit is 250 MB."
+    case "file-hash-fail":
+      return "Unable to process this file. Please try another one."
+    case "db-insert-fail":
+    case "transcribe-kickoff-fail":
+    case "unknown":
+    default:
+      return "Something went wrong. Please try again soon."
+  }
 }

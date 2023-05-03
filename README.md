@@ -1,23 +1,6 @@
-`stay tuned!`
+**hearsay** is a small tool powered by AI (Whisper for transcriptions, GPT-4 for
+summaries) to enrich audio files. The app is simple: add a URL to an audio file (up to 250 MB), and then get a full transcript (and a tl;dr summary) on a dedicated page that you can share or revisit later.
 
-TODO:
+Large files are split up into smaller chunks and transcribed in parallel to improve performance. This is done via an AWS Lambda function ([source code](https://github.com/brendansudol/hearsay-lambdas)) that is triggered from the `transcribe` API endpoint.
 
-- error messages
-- detail page loading / failed states
-- github readme.md(s)
-
-LATER:
-
-- segment permalinks on detail page
-- prettier audio player
-
-DONE:
-
-- 404 page
-- api rate limiting
-- waveform animation
-- fetch summary + title (in lambda)
-- show summary + title on detail page
-- more supported file types
-- autoscroll transcript on seek
-- 4 good seeded examples
+https://try-hearsay.vercel.app/

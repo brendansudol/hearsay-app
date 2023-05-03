@@ -12,6 +12,7 @@ import { Transcript } from "@/components/Transcript"
 import { getEntry } from "@/utils/supabase"
 import { Switch } from "@headlessui/react"
 import clsx from "clsx"
+import { Frown, Loader2 } from "lucide-react"
 
 export const getServerSideProps: GetServerSideProps<{ id: string }> = async (context) => {
   const { id } = context.query ?? {}
@@ -90,17 +91,35 @@ export default function ResultsPage({
   return (
     <div
       className={clsx(
-        "mx-auto p-8 sm:px-12 sm:py-16 max-w-screen-md lg:min-h-screen flex flex-col",
+        "mx-auto p-6 sm:px-12 sm:py-16 max-w-screen-md lg:min-h-screen flex flex-col",
         audioUrl != null && "lg:pb-[140px]"
       )}
     >
       {isLoading && (
-        <div className="flex flex-auto p-6 border-2 border-dashed rounded-lg">Loading...</div>
+        <div className="py-6 flex flex-auto items-center justify-center">
+          <div className="p-5 flex bg-green-50 rounded-lg">
+            <div className="flex-shrink-0">
+              <Loader2 className="h-5 w-5 text-green-400 animate-spin" />
+            </div>
+            <div className="ml-2 text-sm text-green-700">
+              <span className="font-bold">Processing audio...</span> (Most transcriptions take ~60
+              seconds)
+            </div>
+          </div>
+        </div>
       )}
 
       {isFailed && (
-        <div className="flex flex-auto p-6 border-2 border-dashed rounded-lg">
-          Transcription failed :(
+        <div className="py-6 flex flex-auto items-center justify-center">
+          <div className="p-5 flex bg-red-50 rounded-lg">
+            <div className="flex-shrink-0">
+              <Frown className="h-5 w-5 text-red-400" />
+            </div>
+            <div className="ml-2 text-sm text-red-700">
+              <span className="font-bold">Sorry!</span> The transcription failed. Please try again
+              soon.
+            </div>
+          </div>
         </div>
       )}
 
@@ -125,10 +144,10 @@ export default function ResultsPage({
 
       {audioUrl && (
         <div className="fixed inset-x-0 bottom-0 z-10 lg:left-sidebar">
-          <div className="flex items-center gap-6 bg-white/90 px-4 py-4 shadow shadow-slate-200/80 ring-1 ring-slate-900/5 backdrop-blur-sm lg:p-6">
+          <div className="flex items-center gap-5 bg-white/90 p-3 shadow shadow-slate-200/80 ring-1 ring-slate-900/5 backdrop-blur-sm lg:p-6">
             <audio
               ref={audioRef}
-              autoPlay={true}
+              autoPlay={transcript != null}
               className="w-full focus:outline-none focus:ring-2 focus:ring-slate-200 focus:ring-offset-2"
               controls={true}
               onTimeUpdate={handleTimeUpdate}

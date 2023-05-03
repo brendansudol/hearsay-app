@@ -83,7 +83,7 @@ function WaveFormAnimation({ className }: { className?: string }) {
     generate()
 
     window.addEventListener("resize", generate)
-    const intervalId = setInterval(generate, 5_000)
+    const intervalId = setInterval(generate, UPDATE_INTERVAL)
 
     return () => {
       window.removeEventListener("resize", generate)
@@ -108,4 +108,5 @@ function WaveFormAnimation({ className }: { className?: string }) {
 
 const BAR_WIDTH = 6
 const BAR_SPACING = 5
+const UPDATE_INTERVAL = 4_000
 const getHeight = () => Math.floor(Math.random() * 25 + 5)
