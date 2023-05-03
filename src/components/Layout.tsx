@@ -38,16 +38,16 @@ function AboutSection({ className }: { className?: string }) {
       <Header text="About" />
       <div className="mt-2 text-base leading-7 text-slate-900">
         <p className="mb-5">
-          hearsay is a small, simple tool powered by AI (Whisper for transcriptions, GPT-4 for
-          summaries) to enrich audio files in seconds.
+          hearsay is a small tool powered by AI (Whisper for transcriptions, GPT-4 for summaries) to
+          enrich audio files in seconds.
         </p>
         <p>
-          <a href="https://twitter.com/brensudol" className="underline">
-            Made by <strong>@brensudol</strong>
-          </a>
-          <span className="px-3">/</span>
           <a href="https://github.com/brendansudol/hearsay-app" className="underline">
             Code on GitHub
+          </a>
+          <span className="px-3">/</span>
+          <a href="https://twitter.com/brensudol" className="underline">
+            Made by @brensudol
           </a>
         </p>
       </div>
