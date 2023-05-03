@@ -97,8 +97,7 @@ export default function ResultsPage({
               <Loader2 className="h-5 w-5 text-green-400 animate-spin" />
             </div>
             <div className="ml-2 text-sm text-green-700">
-              <span className="font-bold">Processing audio...</span> (Most transcriptions take ~60
-              seconds)
+              <span className="font-bold">Loading...</span> (Most transcriptions take ~60 seconds)
             </div>
           </div>
         </div>
