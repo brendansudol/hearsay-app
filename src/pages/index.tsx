@@ -1,5 +1,6 @@
 import axios from "axios"
 import { Frown, Loader2 } from "lucide-react"
+import Link from "next/link"
 import { useRouter } from "next/router"
 import React, { useCallback, useState } from "react"
 import { TranscribeApiResponse, TranscribeErrorReason } from "@/types"
@@ -87,13 +88,13 @@ export default function Home() {
           <div className="mb-3">Here are a few examples:</div>
           <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
             {EXAMPLES.map((ex, i) => (
-              <a
+              <Link
                 key={i}
                 className="p-3 text-sm rounded-lg bg-slate-100 hover:bg-slate-200 cursor-pointer"
                 href={`/p/${ex.id}`}
               >
                 {ex.text}
-              </a>
+              </Link>
             ))}
           </div>
         </div>

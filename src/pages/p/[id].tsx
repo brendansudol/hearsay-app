@@ -14,24 +14,28 @@ import {
 import { Transcript } from "@/components/Transcript"
 import { getEntry } from "@/utils/supabase"
 
-export const getServerSideProps: GetServerSideProps<{ id: string }> = async (context) => {
+export const getServerSideProps: GetServerSideProps<{ id: string; isReady: boolean }> = async (
+  context
+) => {
   const { id } = context.query ?? {}
   if (id == null || Array.isArray(id)) return { notFound: true }
 
   const { data } = await getEntry(id)
   if (data == null) return { notFound: true }
 
-  return { props: { id } }
+  const isReady = checkIsDoneLoading(data.transcription?.status)
+  return { props: { id, isReady } }
 }
 
 export default function ResultsPage({
   id,
+  isReady,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const audioRef = useRef<HTMLAudioElement>(null)
 
   const [data, setData] = useState<AudioRow>()
   const [currentSegment, setCurrentSegment] = useState<Segment>()
-  const [isPolling, setIsPolling] = useState(true) // TODO: init to false if data is ready
+  const [isPolling, setIsPolling] = useState(true)
   const [shouldAutoScroll, setShouldAutoScroll] = useState(true)
 
   const { audioUrl, summary, transcription } = data ?? {}
@@ -67,7 +71,6 @@ export default function ResultsPage({
         if (data.status === "error") throw new Error(data.reason)
 
         const entry = data.data
-        console.log(entry) // TODO: remove
         setData(entry)
 
         const status = entry.transcription?.status
@@ -97,7 +100,8 @@ export default function ResultsPage({
               <Loader2 className="h-5 w-5 text-green-400 animate-spin" />
             </div>
             <div className="ml-2 text-sm text-green-700">
-              <span className="font-bold">Loading...</span> (Most transcriptions take ~60 seconds)
+              <span className="font-bold">Loading...</span>
+              {!isReady && <span className="ml-1">(Most transcriptions take ~60 seconds)</span>}
             </div>
           </div>
         </div>
@@ -184,6 +188,10 @@ function checkStatus(status: AudioResults["status"] | undefined) {
   const isLoading = status == null || status === "NOT_STARTED" || status === "RUNNING"
   const isFailed = status === "FAILED"
   return { isLoading, isFailed }
+}
+
+function checkIsDoneLoading(status: AudioResults["status"] | undefined) {
+  return status === "SUCCESS" || status === "FAILED"
 }
 
 function constructTranscript(data: AudioRow | undefined): ITranscript | undefined {
